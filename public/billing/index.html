@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<title>Raj Groceries – बिल बनाएं</title>
+<meta name="theme-color" content="#14532d" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2315803d'/%3E%3Ctext x='32' y='44' font-size='34' font-weight='700' text-anchor='middle' fill='%23fff' font-family='sans-serif'%3ER%3C/text%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root { --g:#15803d; --gd:#14532d; --gl:#dcfce7; --o:#f97316; --y:#fbbf24; --ink:#1c2b22; --mut:#5b6b61; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family:'Hind',system-ui,sans-serif; background:#eef4ec; color:var(--ink); font-size:16px; padding-bottom:96px; }
+  .top { background:linear-gradient(135deg,var(--gd),var(--g)); color:#fff; padding:16px; text-align:center; }
+  .top h1 { margin:0; font-size:1.4rem; }
+  .top p { margin:2px 0 0; opacity:.85; font-size:.9rem; }
+  .wrap { max-width:960px; margin:0 auto; padding:16px; display:grid; gap:18px; }
+  @media (min-width:860px){ .wrap { grid-template-columns:1fr 440px; align-items:start; } .prev-col { position:sticky; top:12px; } }
+  .panel { background:#fff; border-radius:18px; padding:16px; box-shadow:0 2px 12px rgba(20,83,45,.1); }
+  .panel h2 { margin:0 0 12px; font-size:1.1rem; color:var(--gd); }
+  label { display:grid; gap:4px; font-weight:600; font-size:.85rem; color:var(--mut); }
+  input, select { font:inherit; padding:9px 11px; border:1px solid #bcd6c1; border-radius:10px; width:100%; background:#fff; color:var(--ink); }
+  input:focus, select:focus { outline:3px solid var(--gl); border-color:var(--g); }
+  .two { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .item { border:1px solid #e1ece2; border-radius:14px; padding:10px; margin-bottom:10px; background:#fafdf9; display:grid; gap:8px; grid-template-columns:1fr 1fr 1fr 38px; align-items:end; }
+  .item .nm { grid-column:1/-1; }
+  .item .amt { font-weight:700; color:var(--gd); padding-bottom:9px; white-space:nowrap; }
+  .x { border:0; background:#fee2e2; color:#b91c1c; border-radius:10px; height:38px; cursor:pointer; font-size:1rem; }
+  .btn { font:inherit; font-weight:600; padding:11px 16px; border-radius:12px; border:2px solid var(--g); background:var(--g); color:#fff; cursor:pointer; }
+  .btn.ghost { background:#fff; color:var(--gd); }
+  .btn.wa { background:#25d366; border-color:#25d366; }
+  .btn.or { background:var(--o); border-color:var(--o); }
+  .btn.full { width:100%; }
+  .dock { position:fixed; left:0; right:0; bottom:0; z-index:5; display:flex; gap:8px; flex-wrap:wrap; justify-content:center; padding:10px; background:rgba(255,255,255,.97); box-shadow:0 -4px 16px rgba(0,0,0,.12); }
+  .dock .btn { flex:1 1 140px; max-width:220px; }
+
+  /* the bill itself */
+  .scroller { overflow-x:auto; }
+  #bill { width:100%; max-width:420px; margin:0 auto; background:#fff; border-radius:18px; overflow:hidden; font-family:'Hind',system-ui,sans-serif; color:var(--ink); border:1px solid #d9e8db; }
+  .b-head { background:linear-gradient(135deg,#14532d 0%,#15803d 60%,#65a30d 100%); color:#fff; text-align:center; padding:18px 14px 16px; }
+  .b-logo { width:44px; height:44px; border-radius:12px; background:#fff; color:var(--g); font-weight:700; font-size:1.5rem; display:grid; place-items:center; margin:0 auto 6px; }
+  .b-head h3 { margin:0; font-size:1.4rem; letter-spacing:.3px; }
+  .b-head p { margin:2px 0 0; font-size:.82rem; opacity:.92; }
+  .b-tag { display:inline-block; margin-top:8px; background:rgba(255,255,255,.2); padding:2px 12px; border-radius:999px; font-size:.7rem; white-space:nowrap; }
+  .b-meta { display:flex; justify-content:space-between; gap:8px; padding:12px 14px; background:#f3faf2; font-size:.75rem; color:var(--mut); border-bottom:1px dashed #b7d4bd; white-space:nowrap; }
+  .b-meta b { display:block; font-size:.92rem; color:var(--ink); white-space:normal; }
+  .b-body { padding:12px 16px 4px; }
+  .b-table { width:100%; border-collapse:collapse; font-size:.9rem; }
+  .b-table th { text-align:left; font-size:.72rem; letter-spacing:.4px; text-transform:uppercase; color:var(--mut); padding:6px 2px; border-bottom:2px solid #dcebdd; }
+  .b-table th:last-child, .b-table td:last-child { text-align:right; }
+  .b-table td { padding:7px 2px; border-bottom:1px solid #eef4ec; vertical-align:top; }
+  .b-table td.q { white-space:nowrap; color:var(--mut); font-size:.82rem; }
+  .b-empty { text-align:center; color:var(--mut); padding:18px 0; font-size:.9rem; }
+  .b-tot { padding:8px 16px 14px; }
+  .b-tot div { display:flex; justify-content:space-between; padding:3px 0; font-size:.92rem; }
+  .b-grand { margin-top:8px; padding:12px 14px !important; border-radius:14px; background:linear-gradient(135deg,#14532d,#15803d); color:#fff; font-size:1.15rem !important; font-weight:700; align-items:center; }
+  .b-pay { text-align:center; margin:0 16px 12px; }
+  .b-pay span { display:inline-block; border:2px solid var(--g); color:var(--g); border-radius:8px; padding:1px 14px; font-weight:700; font-size:.85rem; transform:rotate(-3deg); }
+  .b-foot { text-align:center; padding:12px 16px 16px; background:#fff7ed; border-top:1px dashed #fdba74; font-size:.85rem; color:#7c2d12; }
+  .b-foot b { display:block; font-size:1rem; color:var(--gd); }
+</style>
+</head>
+<body>
+<div class="top"><h1>🧾 बिल बनाएं</h1><p>Raj Groceries – घुघरी, मंडला</p></div>
+
+<div class="wrap">
+  <div class="edit-col">
+    <div class="panel" style="margin-bottom:18px">
+      <h2>ग्राहक की जानकारी</h2>
+      <div class="two">
+        <label>नाम <input id="cname" placeholder="ग्राहक का नाम" /></label>
+        <label>मोबाइल <input id="cphone" inputmode="numeric" maxlength="10" placeholder="10 अंक" /></label>
+      </div>
+      <div class="two" style="margin-top:10px">
+        <label>भुगतान
+          <select id="pay"><option value="">— चुनें —</option><option>नकद</option><option>UPI</option><option>उधार</option></select>
+        </label>
+        <label>बिल नं <input id="billno" inputmode="numeric" /></label>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>सामान</h2>
+      <div id="items"></div>
+      <button id="add" class="btn ghost full" type="button">➕ सामान जोड़ें</button>
+      <label style="margin-top:14px">छूट (₹) <input id="disc" type="number" min="0" step="any" value="0" /></label>
+    </div>
+  </div>
+
+  <div class="prev-col">
+    <div class="panel">
+      <h2>बिल का नमूना</h2>
+      <div class="scroller">
+        <div id="bill">
+          <div class="b-head">
+            <div class="b-logo">R</div>
+            <h3>Raj Groceries</h3>
+            <p>घुघरी, जिला मंडला (म.प्र.)</p>
+            <p>📞 +91 72249 62386</p>
+            <span class="b-tag">Fresh Groceries • Home Delivery</span>
+          </div>
+          <div class="b-meta">
+            <div>बिल नं<b id="p-no">1</b></div>
+            <div style="text-align:center">ग्राहक<b id="p-name">—</b></div>
+            <div style="text-align:right">तारीख<b id="p-date"></b></div>
+          </div>
+          <div class="b-body">
+            <table class="b-table">
+              <thead><tr><th>सामान</th><th>मात्रा × रेट</th><th>रकम</th></tr></thead>
+              <tbody id="p-rows"></tbody>
+            </table>
+            <div id="p-empty" class="b-empty">सामान जोड़ें…</div>
+          </div>
+          <div class="b-tot">
+            <div><span>कुल</span><span id="p-sub">₹0.00</span></div>
+            <div id="p-disc-row"><span>छूट</span><span id="p-disc">-₹0.00</span></div>
+            <div class="b-grand"><span>कुल देय</span><span id="p-total">₹0.00</span></div>
+          </div>
+          <div class="b-pay" id="p-pay-wrap"><span id="p-pay"></span></div>
+          <div class="b-foot"><b>धन्यवाद! 🙏</b>फिर पधारिए – Raj Groceries</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="dock">
+  <button id="png" class="btn or" type="button">⬇️ PNG डाउनलोड</button>
+  <button id="share" class="btn wa" type="button">💬 WhatsApp</button>
+  <button id="new" class="btn ghost" type="button">🆕 नया बिल</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+(function () {
+  var KEY = 'raj-bill-draft', NO = 'raj-bill-no';
+  var $ = function (id) { return document.getElementById(id); };
+  var num = function (v) { var n = parseFloat(v); return isNaN(n) ? 0 : n; };
+  var money = function (n) { return '₹' + (Math.round(n * 100) / 100).toFixed(2); };
+  var qtyTxt = function (n) { return String(Math.round(n * 1000) / 1000); };
+  var today = new Date().toLocaleDateString('en-IN');
+
+  function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) {} return null; }
+
+  var s = { name: '', phone: '', pay: '', no: parseInt(store(NO), 10) || 1, disc: 0, items: [{ n: '', q: 1, r: '' }] };
+  try { var d = JSON.parse(store(KEY)); if (d && d.items && d.items.length) s = d; } catch (e) {}
+
+  function save() { store(KEY, JSON.stringify(s)); }
+
+  function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+  function renderItems() {
+    var box = $('items'); box.innerHTML = '';
+    s.items.forEach(function (it, i) {
+      var el = document.createElement('div'); el.className = 'item';
+      el.innerHTML =
+        '<label class="nm">' + (i + 1) + '. सामान का नाम<input data-k="n" placeholder="जैसे: आटा" value="' + esc(it.n) + '"></label>' +
+        '<label>मात्रा<input data-k="q" type="number" min="0" step="any" value="' + esc(it.q) + '"></label>' +
+        '<label>रेट ₹<input data-k="r" type="number" min="0" step="any" placeholder="0" value="' + esc(it.r) + '"></label>' +
+        '<button class="x" type="button" aria-label="हटाएं">✕</button>' +
+        '<div class="amt" style="grid-column:1/-1">रकम: <span>' + money(num(it.q) * num(it.r)) + '</span></div>';
+      el.addEventListener('input', function (e) {
+        var k = e.target.getAttribute('data-k'); if (!k) return;
+        it[k] = e.target.value; el.querySelector('.amt span').textContent = money(num(it.q) * num(it.r)); update();
+      });
+      el.querySelector('.x').addEventListener('click', function () {
+        s.items.splice(i, 1); if (!s.items.length) s.items.push({ n: '', q: 1, r: '' });
+        renderItems(); update();
+      });
+      box.appendChild(el);
+    });
+  }
+
+  function totals() {
+    var sub = 0; s.items.forEach(function (it) { sub += num(it.q) * num(it.r); });
+    var d = Math.min(Math.max(num(s.disc), 0), sub);
+    return { sub: sub, d: d, total: sub - d };
+  }
+
+  function update() {
+    var t = totals(), rows = '', has = false;
+    s.items.forEach(function (it) {
+      if (!it.n.trim() && !num(it.r)) return;
+      has = true;
+      rows += '<tr><td>' + esc(it.n.trim() || 'सामान') + '</td><td class="q">' + qtyTxt(num(it.q)) + ' × ' + qtyTxt(num(it.r)) + '</td><td>' + money(num(it.q) * num(it.r)) + '</td></tr>';
+    });
+    $('p-rows').innerHTML = rows;
+    $('p-empty').style.display = has ? 'none' : '';
+    $('p-no').textContent = s.no;
+    $('p-name').textContent = s.name.trim() || '—';
+    $('p-date').textContent = today;
+    $('p-sub').textContent = money(t.sub);
+    $('p-disc').textContent = '-' + money(t.d);
+    $('p-disc-row').style.display = t.d > 0 ? '' : 'none';
+    $('p-total').textContent = money(t.total);
+    $('p-pay').textContent = s.pay ? 'भुगतान: ' + s.pay : '';
+    $('p-pay-wrap').style.display = s.pay ? '' : 'none';
+    save();
+  }
+
+  function bind(id, key, parse) {
+    $(id).addEventListener('input', function (e) { s[key] = parse ? parse(e.target.value) : e.target.value; update(); });
+  }
+  bind('cname', 'name'); bind('cphone', 'phone'); bind('pay', 'pay'); bind('disc', 'disc');
+  bind('billno', 'no', function (v) { return parseInt(v, 10) || 1; });
+
+  function fillForm() {
+    $('cname').value = s.name; $('cphone').value = s.phone; $('pay').value = s.pay;
+    $('billno').value = s.no; $('disc').value = s.disc;
+  }
+
+  $('add').addEventListener('click', function () {
+    s.items.push({ n: '', q: 1, r: '' }); renderItems(); update();
+    var ins = $('items').querySelectorAll('[data-k="n"]'); ins[ins.length - 1].focus();
+  });
+
+  $('new').addEventListener('click', function () {
+    if (!confirm('नया बिल शुरू करें? मौजूदा बिल हट जाएगा।')) return;
+    s = { name: '', phone: '', pay: '', no: s.no + 1, disc: 0, items: [{ n: '', q: 1, r: '' }] };
+    store(NO, String(s.no)); fillForm(); renderItems(); update();
+  });
+
+  function makeCanvas() {
+    if (typeof html2canvas === 'undefined') { alert('PNG बनाने के लिए इंटरनेट चाहिए। कृपया इंटरनेट चालू करके फिर कोशिश करें।'); return null; }
+    var p = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+    return p.then(function () { return html2canvas($('bill'), { scale: 3, backgroundColor: '#ffffff', useCORS: true }); });
+  }
+  function fileName() {
+    var n = s.name.trim().replace(/[^\wऀ-ॿ]+/g, '-').replace(/^-|-$/g, '');
+    return 'Raj-Groceries-Bill-' + s.no + (n ? '-' + n : '') + '.png';
+  }
+
+  $('png').addEventListener('click', function () {
+    var c = makeCanvas(); if (!c) return;
+    c.then(function (canvas) {
+      canvas.toBlob(function (blob) {
+        var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fileName();
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(function () { URL.revokeObjectURL(a.href); }, 2000);
+      }, 'image/png');
+    });
+  });
+
+  function textBill() {
+    var t = totals(), L = ['*Raj Groceries* – घुघरी, मंडला', 'बिल नं: ' + s.no + ' | तारीख: ' + today];
+    if (s.name.trim()) L.push('ग्राहक: ' + s.name.trim());
+    L.push('------------------');
+    var n = 0;
+    s.items.forEach(function (it) {
+      if (!it.n.trim() && !num(it.r)) return; n++;
+      L.push(n + '. ' + (it.n.trim() || 'सामान') + ' – ' + qtyTxt(num(it.q)) + ' × ' + qtyTxt(num(it.r)) + ' = ' + money(num(it.q) * num(it.r)));
+    });
+    L.push('------------------');
+    if (t.d > 0) { L.push('कुल: ' + money(t.sub)); L.push('छूट: -' + money(t.d)); }
+    L.push('*कुल देय: ' + money(t.total) + '*');
+    if (s.pay) L.push('भुगतान: ' + s.pay);
+    L.push('धन्यवाद! फिर पधारिए 🙏');
+    return L.join('\n');
+  }
+
+  $('share').addEventListener('click', function () {
+    var ph = String(s.phone).replace(/\D/g, ''), to = ph.length === 10 ? '91' + ph : '';
+    var open = function () { window.open('https://wa.me/' + to + '?text=' + encodeURIComponent(textBill()), '_blank'); };
+    var c = makeCanvas();
+    if (!c || !navigator.canShare) return open();
+    c.then(function (canvas) {
+      canvas.toBlob(function (blob) {
+        var f = new File([blob], fileName(), { type: 'image/png' });
+        if (navigator.canShare({ files: [f] })) navigator.share({ files: [f], title: 'Raj Groceries Bill' }).catch(function () {});
+        else open();
+      }, 'image/png');
+    });
+  });
+
+  fillForm(); renderItems(); update();
+})();
+</script>
+</body>
+</html>
