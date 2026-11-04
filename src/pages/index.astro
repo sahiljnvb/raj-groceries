@@ -1,0 +1,138 @@
+---
+const phone = '917224962386';
+const shown = '+91 72249 62386';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const wa = (text) => `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+
+const groceries = ['आटा', 'चावल', 'दाल', 'तेल', 'मसाले', 'बिस्कुट', 'कोल्ड ड्रिंक्स', 'रोज़मर्रा का सामान'];
+const sweets = ['हल्दीराम सफेद रसगुल्ला', 'हल्दीराम काला जामुन', 'हल्दीराम सोनपापड़ी'];
+const special = ['ढोकला', 'रसमलाई'];
+const tiffin = ['दोपहर का टिफिन', 'रात का टिफिन', 'मंथली टिफिन'];
+const points = [
+  'घर बैठे WhatsApp पर order करें',
+  'तेज़ और सुविधाजनक home delivery',
+  'रोज़मर्रा के सामान पर बढ़िया दाम',
+  'Regular customers के लिए special offers',
+];
+---
+
+<!doctype html>
+<html lang="hi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Raj Groceries – घुघरी, मंडला</title>
+    <meta name="description" content="Raj Groceries, घुघरी (मंडला, म.प्र.) – घर बैठे WhatsApp पर order करें। Home delivery, हल्दीराम मिठाई और टिफिन सर्विस।" />
+    <meta name="theme-color" content="#15803d" />
+    <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
+  </head>
+  <body>
+    <header class="top">
+      <strong>Raj Groceries</strong>
+      <a class="btn small" href={wa('नमस्ते, मुझे सामान order करना है।')}>WhatsApp</a>
+    </header>
+
+    <main>
+      <section class="hero">
+        <p class="tag">Fresh Groceries • Best Prices • Home Delivery</p>
+        <h1>आपकी अपनी किराना दुकान,<br />अब आपके घर तक!</h1>
+        <p>आटा, चावल, दाल, तेल, मसाले, बिस्कुट, कोल्ड ड्रिंक्स और रोज़मर्रा का सामान आसानी से पाएं। घर बैठे WhatsApp पर order करें।</p>
+        <div class="row">
+          <a class="btn" href={wa('नमस्ते, मुझे सामान order करना है।')}>WhatsApp पर order करें</a>
+          <a class="btn ghost" href={`tel:+${phone}`}>कॉल करें</a>
+        </div>
+      </section>
+
+      <section>
+        <h2>क्यों Raj Groceries?</h2>
+        <ul class="points">
+          {points.map((p) => <li>{p}</li>)}
+        </ul>
+      </section>
+
+      <section>
+        <h2>किराना सामान</h2>
+        <div class="chips">
+          {groceries.map((g) => <a class="chip" href={wa(`मुझे ${g} चाहिए।`)}>{g}</a>)}
+        </div>
+        <p class="note">किसी भी सामान पर टैप करें – WhatsApp में मैसेज खुल जाएगा।</p>
+      </section>
+
+      <section>
+        <h2>पैक्ड मिठाई</h2>
+        <div class="chips">
+          {sweets.map((s) => <a class="chip" href={wa(`मुझे ${s} चाहिए।`)}>{s}</a>)}
+        </div>
+      </section>
+
+      <section>
+        <h2>स्पेशल ऑर्डर</h2>
+        <div class="chips">
+          {special.map((s) => <a class="chip" href={wa(`मुझे ${s} का special order करना है।`)}>{s}</a>)}
+        </div>
+        <p class="note">स्पेशल ऑर्डर का दाम अलग (extra price) रहेगा।</p>
+      </section>
+
+      <section>
+        <h2>घर का बना टिफिन</h2>
+        <div class="chips">
+          {tiffin.map((t) => <a class="chip" href={wa(`मुझे ${t} चाहिए।`)}>{t}</a>)}
+        </div>
+        <p class="note">टिफिन सर्विस का मेन्यू जानने के लिए WhatsApp पर पूछें।</p>
+      </section>
+
+      <section>
+        <h2>अपनी पर्ची भेजें</h2>
+        <p>अपना सामान नीचे लिखें, फिर बटन दबाएं।</p>
+        <form id="parchi">
+          <textarea id="list" rows="5" placeholder="जैसे: आटा 5 kg, तेल 1 लीटर, चावल 2 kg"></textarea>
+          <button class="btn" type="submit">पर्ची WhatsApp पर भेजें</button>
+        </form>
+      </section>
+    </main>
+
+    <footer>
+      <p><strong>Raj Groceries</strong> – घुघरी, जिला मंडला (म.प्र.)</p>
+      <p><a href={`tel:+${phone}`}>{shown}</a></p>
+    </footer>
+
+    <a class="float" href={wa('नमस्ते, मुझे सामान order करना है।')} aria-label="WhatsApp">WhatsApp</a>
+
+    <script is:inline define:vars={{ phone }}>
+      document.getElementById('parchi').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var t = document.getElementById('list').value.trim();
+        var msg = t ? 'नमस्ते, मेरी पर्ची:\n' + t : 'नमस्ते, मुझे सामान order करना है।';
+        window.location.href = 'https://wa.me/' + phone + '?text=' + encodeURIComponent(msg);
+      });
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  :root { --g: #15803d; --gd: #166534; --bg: #f7fbf5; --ink: #1f2937; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, 'Noto Sans Devanagari', sans-serif; background: var(--bg); color: var(--ink); line-height: 1.6; }
+  main, .top, footer { max-width: 760px; margin: 0 auto; padding: 0 16px; }
+  .top { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; padding-bottom: 12px; }
+  section { padding: 20px 0; }
+  .hero { padding-top: 24px; }
+  .tag { color: var(--gd); font-weight: 600; margin: 0 0 8px; }
+  h1 { font-size: 1.9rem; line-height: 1.3; margin: 0 0 12px; }
+  h2 { font-size: 1.3rem; margin: 0 0 10px; color: var(--gd); }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+  .btn { display: inline-block; background: var(--g); color: #fff; padding: 12px 20px; border-radius: 10px; font-weight: 600; text-decoration: none; border: 0; font: inherit; font-weight: 600; cursor: pointer; }
+  .btn:hover { background: var(--gd); }
+  .btn.ghost { background: #fff; color: var(--g); border: 2px solid var(--g); }
+  .btn.small { padding: 6px 14px; }
+  .points { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  .points li { background: #fff; border-left: 4px solid var(--g); padding: 10px 14px; border-radius: 6px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { background: #fff; border: 1px solid #cfe5d3; padding: 8px 14px; border-radius: 999px; color: var(--ink); text-decoration: none; }
+  .chip:hover { border-color: var(--g); background: #ecf8ee; }
+  .note { font-size: .9rem; color: #6b7280; margin: 10px 0 0; }
+  textarea { width: 100%; padding: 12px; border: 1px solid #cfe5d3; border-radius: 10px; font: inherit; margin-bottom: 10px; }
+  footer { text-align: center; padding-top: 24px; padding-bottom: 90px; border-top: 1px solid #dfeee2; }
+  footer a { color: var(--gd); font-weight: 600; }
+  .float { position: fixed; right: 16px; bottom: 16px; background: #25d366; color: #fff; padding: 12px 18px; border-radius: 999px; text-decoration: none; font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,.25); }
+</style>
