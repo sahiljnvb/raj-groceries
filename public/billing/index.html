@@ -61,10 +61,45 @@
   .b-pay span { display:inline-block; border:2px solid var(--g); color:var(--g); border-radius:8px; padding:1px 14px; font-weight:700; font-size:.85rem; transform:rotate(-3deg); }
   .b-foot { text-align:center; padding:12px 16px 16px; background:#fff7ed; border-top:1px dashed #fdba74; font-size:.85rem; color:#7c2d12; }
   .b-foot b { display:block; font-size:1rem; color:var(--gd); }
+
+  /* MPIN lock */
+  body.locked .top, body.locked .wrap, body.locked .dock { display:none; }
+  .tools { margin-top:8px; display:flex; gap:8px; justify-content:center; }
+  .tools button { font:inherit; font-size:.8rem; background:rgba(255,255,255,.18); color:#fff; border:1px solid rgba(255,255,255,.4); border-radius:999px; padding:3px 12px; cursor:pointer; }
+  #lock { position:fixed; inset:0; z-index:50; display:none; flex-direction:column; align-items:center; justify-content:center; gap:14px; background:linear-gradient(135deg,#14532d,#15803d 60%,#65a30d); color:#fff; padding:16px; text-align:center; }
+  #lock.on { display:flex; }
+  #lock .lg { width:56px; height:56px; border-radius:16px; background:#fff; color:var(--g); font-weight:700; font-size:1.9rem; display:grid; place-items:center; }
+  #lock h2 { margin:0; font-size:1.3rem; }
+  #lmsg { margin:0; min-height:1.4em; font-size:.95rem; }
+  .dots { display:flex; gap:14px; }
+  .dots i { width:16px; height:16px; border-radius:50%; border:2px solid #fff; }
+  .dots i.f { background:#fff; }
+  .dots.bad { animation:shake .4s; }
+  @keyframes shake { 25% { transform:translateX(-8px); } 75% { transform:translateX(8px); } }
+  .pad { display:grid; grid-template-columns:repeat(3,72px); gap:12px; }
+  .pad button { font:inherit; font-size:1.5rem; font-weight:600; height:62px; border-radius:50%; border:0; background:rgba(255,255,255,.18); color:#fff; cursor:pointer; }
+  .pad button:active { background:rgba(255,255,255,.35); }
+  .pad .sp { visibility:hidden; }
+  #lcancel { display:none; background:none; border:0; color:#fff; text-decoration:underline; font:inherit; cursor:pointer; }
 </style>
 </head>
-<body>
-<div class="top"><h1>🧾 बिल बनाएं</h1><p>Raj Groceries – घुघरी, मंडला</p></div>
+<body class="locked">
+<div id="lock" class="on">
+  <div class="lg">R</div>
+  <h2 id="ltitle">MPIN डालें (6 अंक)</h2>
+  <p id="lmsg"></p>
+  <div class="dots" id="ldots"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="pad" id="lpad">
+    <button type="button">1</button><button type="button">2</button><button type="button">3</button>
+    <button type="button">4</button><button type="button">5</button><button type="button">6</button>
+    <button type="button">7</button><button type="button">8</button><button type="button">9</button>
+    <button type="button" class="sp" tabindex="-1">·</button><button type="button">0</button><button type="button" id="lback" aria-label="मिटाएं">⌫</button>
+  </div>
+  </div>
+
+<div class="top"><h1>🧾 बिल बनाएं</h1><p>Raj Groceries – घुघरी, मंडला</p>
+  <div class="tools"><button id="lockbtn" type="button">🔒 लॉक करें</button></div>
+</div>
 
 <div class="wrap">
   <div class="edit-col">
@@ -133,6 +168,59 @@
   <button id="new" class="btn ghost" type="button">🆕 नया बिल</button>
 </div>
 
+<script>
+(function () {
+  var HASH = '3cdf42369f1cdd371c6b448e943df591004a580ded7fdcfcd9a9fd4898f3055e', SALT = 'raj-groceries-v1:', SK = 'raj-bill-ok', LEN = 6;
+  var $ = function (id) { return document.getElementById(id); };
+  var buf = '', fails = 0, blockedUntil = 0;
+
+  function get(k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } }
+  function put(k, v) { try { sessionStorage.setItem(k, v); } catch (e) {} }
+  function sha(p) {
+    return crypto.subtle.digest('SHA-256', new TextEncoder().encode(SALT + p)).then(function (b) {
+      return Array.prototype.map.call(new Uint8Array(b), function (x) { return ('0' + x.toString(16)).slice(-2); }).join('');
+    });
+  }
+  function dots(bad) {
+    var d = $('ldots').children;
+    for (var i = 0; i < LEN; i++) d[i].className = i < buf.length ? 'f' : '';
+    $('ldots').className = 'dots' + (bad ? ' bad' : '');
+  }
+  function say(t) { $('lmsg').textContent = t || ''; }
+  function show() { buf = ''; dots(); $('lock').className = 'on'; document.body.classList.add('locked'); }
+  function hide() { $('lock').className = ''; document.body.classList.remove('locked'); }
+
+  function done() {
+    if (Date.now() < blockedUntil) { buf = ''; dots(true); say('कुछ देर बाद कोशिश करें'); return; }
+    if (!(window.crypto && crypto.subtle)) { buf = ''; dots(true); say('कृपया https लिंक से खोलें'); return; }
+    sha(buf).then(function (h) {
+      if (h === HASH) { put(SK, '1'); fails = 0; say(''); hide(); }
+      else {
+        fails++; buf = ''; dots(true);
+        if (fails >= 5) { blockedUntil = Date.now() + 60000; fails = 0; say('5 बार गलत – 1 मिनट रुकें'); }
+        else say('गलत MPIN, फिर कोशिश करें');
+      }
+    });
+  }
+  function press(d) {
+    if (buf.length >= LEN) return;
+    buf += d; dots();
+    if (buf.length === LEN) setTimeout(done, 120);
+  }
+  $('lpad').addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b || b.classList.contains('sp')) return;
+    if (b.id === 'lback') { buf = buf.slice(0, -1); dots(); } else press(b.textContent);
+  });
+  document.addEventListener('keydown', function (e) {
+    if ($('lock').className !== 'on') return;
+    if (/^[0-9]$/.test(e.key)) press(e.key);
+    else if (e.key === 'Backspace') { buf = buf.slice(0, -1); dots(); }
+  });
+  $('lockbtn').addEventListener('click', function () { try { sessionStorage.removeItem(SK); } catch (e) {} say(''); show(); });
+
+  if (get(SK) === '1') hide(); else show();
+})();
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 (function () {
