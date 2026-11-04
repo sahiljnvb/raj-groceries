@@ -3,16 +3,43 @@ const phone = '917224962386';
 const shown = '+91 72249 62386';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const wa = (text) => `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+const hello = 'नमस्ते Raj Groceries, मुझे सामान order करना है।';
+const map = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent('Ghughri, Mandla, Madhya Pradesh');
 
-const groceries = ['आटा', 'चावल', 'दाल', 'तेल', 'मसाले', 'बिस्कुट', 'कोल्ड ड्रिंक्स', 'रोज़मर्रा का सामान'];
-const sweets = ['हल्दीराम सफेद रसगुल्ला', 'हल्दीराम काला जामुन', 'हल्दीराम सोनपापड़ी'];
-const special = ['ढोकला', 'रसमलाई'];
-const tiffin = ['दोपहर का टिफिन', 'रात का टिफिन', 'मंथली टिफिन'];
 const points = [
-  'घर बैठे WhatsApp पर order करें',
-  'तेज़ और सुविधाजनक home delivery',
-  'रोज़मर्रा के सामान पर बढ़िया दाम',
-  'Regular customers के लिए special offers',
+  { i: '📱', t: 'घर बैठे WhatsApp पर order करें' },
+  { i: '🛵', t: 'तेज़ और सुविधाजनक home delivery' },
+  { i: '💰', t: 'रोज़मर्रा के सामान पर बढ़िया दाम' },
+  { i: '🎁', t: 'Regular customers के लिए special offers' },
+];
+const groceries = [
+  { i: '🌾', t: 'आटा' },
+  { i: '🍚', t: 'चावल' },
+  { i: '🫘', t: 'दाल' },
+  { i: '🛢️', t: 'तेल' },
+  { i: '🌶️', t: 'मसाले' },
+  { i: '🍪', t: 'बिस्कुट' },
+  { i: '🥤', t: 'कोल्ड ड्रिंक्स' },
+  { i: '🛒', t: 'रोज़मर्रा का सामान' },
+];
+const sweets = [
+  { i: '⚪', t: 'हल्दीराम सफेद रसगुल्ला' },
+  { i: '🟤', t: 'हल्दीराम काला जामुन' },
+  { i: '🟨', t: 'हल्दीराम सोनपापड़ी' },
+];
+const special = [
+  { i: '🟡', t: 'ढोकला' },
+  { i: '🍮', t: 'रसमलाई' },
+];
+const tiffin = [
+  { i: '☀️', t: 'दोपहर का टिफिन' },
+  { i: '🌙', t: 'रात का टिफिन' },
+  { i: '📅', t: 'मंथली टिफिन' },
+];
+const steps = [
+  { n: '1', t: 'सामान चुनें', d: 'नीचे से सामान पर टैप करें या अपनी पर्ची लिखें।' },
+  { n: '2', t: 'WhatsApp पर भेजें', d: 'एक टैप में मैसेज हमारे पास पहुँच जाएगा।' },
+  { n: '3', t: 'घर पर पाएं', d: 'हम आपके घर तक सामान पहुँचाएंगे।' },
 ];
 ---
 
@@ -21,118 +48,253 @@ const points = [
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Raj Groceries – घुघरी, मंडला</title>
-    <meta name="description" content="Raj Groceries, घुघरी (मंडला, म.प्र.) – घर बैठे WhatsApp पर order करें। Home delivery, हल्दीराम मिठाई और टिफिन सर्विस।" />
+    <title>Raj Groceries – घुघरी, मंडला | घर बैठे WhatsApp पर order करें</title>
+    <meta name="description" content="Raj Groceries, घुघरी (मंडला, म.प्र.) – आटा, चावल, दाल, तेल, मसाले और रोज़मर्रा का सामान। Home delivery, हल्दीराम मिठाई और घर का टिफिन। WhatsApp पर order करें।" />
     <meta name="theme-color" content="#15803d" />
+    <meta property="og:title" content="Raj Groceries – आपकी अपनी किराना दुकान, अब आपके घर तक!" />
+    <meta property="og:description" content="घुघरी, मंडला – घर बैठे WhatsApp पर order करें। Home delivery उपलब्ध।" />
+    <meta property="og:type" content="website" />
     <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&display=swap" rel="stylesheet" />
   </head>
   <body>
+    <div class="offer">🛵 Home Delivery उपलब्ध • WhatsApp पर order करें: <a href={`tel:+${phone}`}>{shown}</a></div>
+
     <header class="top">
-      <strong>Raj Groceries</strong>
-      <a class="btn small" href={wa('नमस्ते, मुझे सामान order करना है।')}>WhatsApp</a>
+      <a class="brand" href="#top"><span class="logo">R</span> Raj Groceries</a>
+      <nav>
+        <a href="#saman">सामान</a>
+        <a href="#mithai">मिठाई</a>
+        <a href="#tiffin">टिफिन</a>
+        <a href="#parchi">पर्ची</a>
+      </nav>
+      <a class="btn wa small" href={wa(hello)}>WhatsApp</a>
     </header>
 
-    <main>
+    <main id="top">
       <section class="hero">
-        <p class="tag">Fresh Groceries • Best Prices • Home Delivery</p>
-        <h1>आपकी अपनी किराना दुकान,<br />अब आपके घर तक!</h1>
-        <p>आटा, चावल, दाल, तेल, मसाले, बिस्कुट, कोल्ड ड्रिंक्स और रोज़मर्रा का सामान आसानी से पाएं। घर बैठे WhatsApp पर order करें।</p>
-        <div class="row">
-          <a class="btn" href={wa('नमस्ते, मुझे सामान order करना है।')}>WhatsApp पर order करें</a>
-          <a class="btn ghost" href={`tel:+${phone}`}>कॉल करें</a>
+        <div class="wrap hero-in">
+          <div class="hero-txt">
+            <p class="pill">Fresh Groceries • Best Prices • Home Delivery</p>
+            <h1>आपकी अपनी किराना दुकान,<br /><span>अब आपके घर तक!</span></h1>
+            <p class="lead">आटा, चावल, दाल, तेल, मसाले, बिस्कुट, कोल्ड ड्रिंक्स और रोज़मर्रा का सारा सामान – बस WhatsApp पर बताइए।</p>
+            <div class="row">
+              <a class="btn wa big" href={wa(hello)}>💬 WhatsApp पर order करें</a>
+              <a class="btn ghost big" href={`tel:+${phone}`}>📞 कॉल करें</a>
+            </div>
+            <ul class="trust">
+              <li>✅ घर तक delivery</li>
+              <li>✅ बढ़िया दाम</li>
+              <li>✅ Regular customers को offers</li>
+            </ul>
+          </div>
+          <div class="hero-art" aria-hidden="true">
+            <span style="--d:0s">🛒</span><span style="--d:.4s">🌾</span><span style="--d:.8s">🍚</span>
+            <span style="--d:1.2s">🛢️</span><span style="--d:1.6s">🍪</span><span style="--d:2s">🥤</span>
+          </div>
         </div>
       </section>
 
-      <section>
+      <section class="wrap">
         <h2>क्यों Raj Groceries?</h2>
-        <ul class="points">
-          {points.map((p) => <li>{p}</li>)}
-        </ul>
-      </section>
-
-      <section>
-        <h2>किराना सामान</h2>
-        <div class="chips">
-          {groceries.map((g) => <a class="chip" href={wa(`मुझे ${g} चाहिए।`)}>{g}</a>)}
-        </div>
-        <p class="note">किसी भी सामान पर टैप करें – WhatsApp में मैसेज खुल जाएगा।</p>
-      </section>
-
-      <section>
-        <h2>पैक्ड मिठाई</h2>
-        <div class="chips">
-          {sweets.map((s) => <a class="chip" href={wa(`मुझे ${s} चाहिए।`)}>{s}</a>)}
+        <div class="grid four">
+          {points.map((p) => (
+            <div class="card feat"><div class="ico">{p.i}</div><p>{p.t}</p></div>
+          ))}
         </div>
       </section>
 
-      <section>
-        <h2>स्पेशल ऑर्डर</h2>
-        <div class="chips">
-          {special.map((s) => <a class="chip" href={wa(`मुझे ${s} का special order करना है।`)}>{s}</a>)}
+      <section class="wrap" id="saman">
+        <h2>🛒 किराना सामान</h2>
+        <p class="sub">जो चाहिए उस पर टैप करें – WhatsApp में मैसेज अपने आप लिख जाएगा।</p>
+        <div class="grid tiles">
+          {groceries.map((g) => (
+            <a class="tile" href={wa(`मुझे ${g.t} चाहिए।`)}><span>{g.i}</span>{g.t}<em>order करें →</em></a>
+          ))}
         </div>
-        <p class="note">स्पेशल ऑर्डर का दाम अलग (extra price) रहेगा।</p>
       </section>
 
-      <section>
-        <h2>घर का बना टिफिन</h2>
-        <div class="chips">
-          {tiffin.map((t) => <a class="chip" href={wa(`मुझे ${t} चाहिए।`)}>{t}</a>)}
+      <section class="band sweet" id="mithai">
+        <div class="wrap">
+          <h2>🍬 हल्दीराम पैक्ड मिठाई</h2>
+          <div class="grid tiles">
+            {sweets.map((s) => (
+              <a class="tile" href={wa(`मुझे ${s.t} चाहिए।`)}><span>{s.i}</span>{s.t}<em>order करें →</em></a>
+            ))}
+          </div>
+
+          <h2 class="h2b">⭐ स्पेशल ऑर्डर</h2>
+          <div class="grid tiles two">
+            {special.map((s) => (
+              <a class="tile" href={wa(`मुझे ${s.t} का special order करना है।`)}><span>{s.i}</span>{s.t}<em>special order →</em></a>
+            ))}
+          </div>
+          <p class="note">स्पेशल ऑर्डर का दाम अलग (extra price) रहेगा।</p>
         </div>
-        <p class="note">टिफिन सर्विस का मेन्यू जानने के लिए WhatsApp पर पूछें।</p>
       </section>
 
-      <section>
-        <h2>अपनी पर्ची भेजें</h2>
-        <p>अपना सामान नीचे लिखें, फिर बटन दबाएं।</p>
-        <form id="parchi">
-          <textarea id="list" rows="5" placeholder="जैसे: आटा 5 kg, तेल 1 लीटर, चावल 2 kg"></textarea>
-          <button class="btn" type="submit">पर्ची WhatsApp पर भेजें</button>
-        </form>
+      <section class="band tiffin" id="tiffin">
+        <div class="wrap">
+          <h2>🍱 घर का बना टिफिन सर्विस</h2>
+          <p class="sub">घर जैसा खाना, सीधे आप तक। मेन्यू जानने के लिए WhatsApp पर पूछें।</p>
+          <div class="grid tiles">
+            {tiffin.map((t) => (
+              <a class="tile" href={wa(`मुझे ${t.t} चाहिए। मेन्यू बताइए।`)}><span>{t.i}</span>{t.t}<em>पूछें →</em></a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section class="wrap">
+        <h2>कैसे order करें?</h2>
+        <div class="grid three">
+          {steps.map((s) => (
+            <div class="card step"><b>{s.n}</b><h3>{s.t}</h3><p>{s.d}</p></div>
+          ))}
+        </div>
+      </section>
+
+      <section class="wrap" id="parchi">
+        <div class="card parchi">
+          <h2>📝 अपनी पर्ची भेजें</h2>
+          <p class="sub">अपना सारा सामान एक साथ लिखें, फिर बटन दबाएं।</p>
+          <form id="parchi-form">
+            <textarea id="list" rows="5" placeholder="जैसे: आटा 5 kg, तेल 1 लीटर, चावल 2 kg"></textarea>
+            <button class="btn wa big" type="submit">💬 पर्ची WhatsApp पर भेजें</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="wrap share">
+        <p>अपने दोस्तों और पड़ोसियों को भी बताइए 👇</p>
+        <a id="share" class="btn ghost" href="#">📤 WhatsApp पर शेयर करें</a>
       </section>
     </main>
 
     <footer>
-      <p><strong>Raj Groceries</strong> – घुघरी, जिला मंडला (म.प्र.)</p>
-      <p><a href={`tel:+${phone}`}>{shown}</a></p>
+      <div class="wrap">
+        <p class="fb">Raj Groceries</p>
+        <p>📍 घुघरी, जिला मंडला (म.प्र.)</p>
+        <p>📞 <a href={`tel:+${phone}`}>{shown}</a></p>
+        <p><a href={map} target="_blank" rel="noopener">🗺️ Map पर देखें</a></p>
+        <p class="owner"><a href={`${base}/bill/`}>🧾 दुकानदार: बिल बनाएं</a></p>
+      </div>
     </footer>
 
-    <a class="float" href={wa('नमस्ते, मुझे सामान order करना है।')} aria-label="WhatsApp">WhatsApp</a>
+    <div class="dock">
+      <a class="btn wa" href={wa(hello)}>💬 WhatsApp</a>
+      <a class="btn call" href={`tel:+${phone}`}>📞 कॉल</a>
+    </div>
 
     <script is:inline define:vars={{ phone }}>
-      document.getElementById('parchi').addEventListener('submit', function (e) {
+      document.getElementById('parchi-form').addEventListener('submit', function (e) {
         e.preventDefault();
         var t = document.getElementById('list').value.trim();
-        var msg = t ? 'नमस्ते, मेरी पर्ची:\n' + t : 'नमस्ते, मुझे सामान order करना है।';
+        var msg = t ? 'नमस्ते, मेरी पर्ची:\n' + t : 'नमस्ते Raj Groceries, मुझे सामान order करना है।';
         window.location.href = 'https://wa.me/' + phone + '?text=' + encodeURIComponent(msg);
+      });
+      document.getElementById('share').addEventListener('click', function (e) {
+        e.preventDefault();
+        var m = 'Raj Groceries, घुघरी – घर बैठे WhatsApp पर order करें, home delivery उपलब्ध! ' + location.href;
+        window.open('https://wa.me/?text=' + encodeURIComponent(m), '_blank');
       });
     </script>
   </body>
 </html>
 
 <style is:global>
-  :root { --g: #15803d; --gd: #166534; --bg: #f7fbf5; --ink: #1f2937; }
+  :root { --g: #15803d; --gd: #14532d; --gl: #dcfce7; --o: #f97316; --y: #fbbf24; --bg: #fffdf7; --ink: #1c2b22; }
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: system-ui, 'Noto Sans Devanagari', sans-serif; background: var(--bg); color: var(--ink); line-height: 1.6; }
-  main, .top, footer { max-width: 760px; margin: 0 auto; padding: 0 16px; }
-  .top { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; padding-bottom: 12px; }
-  section { padding: 20px 0; }
-  .hero { padding-top: 24px; }
-  .tag { color: var(--gd); font-weight: 600; margin: 0 0 8px; }
-  h1 { font-size: 1.9rem; line-height: 1.3; margin: 0 0 12px; }
-  h2 { font-size: 1.3rem; margin: 0 0 10px; color: var(--gd); }
-  .row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
-  .btn { display: inline-block; background: var(--g); color: #fff; padding: 12px 20px; border-radius: 10px; font-weight: 600; text-decoration: none; border: 0; font: inherit; font-weight: 600; cursor: pointer; }
-  .btn:hover { background: var(--gd); }
-  .btn.ghost { background: #fff; color: var(--g); border: 2px solid var(--g); }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; font-family: 'Hind', system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.6; font-size: 17px; padding-bottom: 72px; }
+  a { color: inherit; }
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 0 16px; }
+  section { padding: 28px 0; }
+  h2 { font-size: 1.6rem; margin: 0 0 8px; color: var(--gd); line-height: 1.3; }
+  h3 { margin: 4px 0; }
+  .sub { margin: 0 0 16px; color: #4b5d52; }
+  .note { margin: 14px 0 0; font-size: .95rem; background: #fff7ed; border: 1px dashed var(--o); padding: 8px 12px; border-radius: 10px; }
+
+  .offer { background: var(--gd); color: #fff; text-align: center; font-size: .9rem; padding: 6px 12px; }
+  .offer a { color: var(--y); font-weight: 600; text-decoration: none; }
+
+  .top { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 16px; justify-content: space-between; padding: 10px 16px; background: rgba(255,253,247,.95); backdrop-filter: blur(6px); border-bottom: 1px solid #e7efe3; }
+  .brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 1.2rem; text-decoration: none; color: var(--gd); }
+  .logo { background: var(--g); color: #fff; width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; }
+  .top nav { display: none; gap: 18px; }
+  .top nav a { text-decoration: none; font-weight: 500; }
+  .top nav a:hover { color: var(--g); }
+  @media (min-width: 720px) { .top nav { display: flex; } }
+
+  .btn { display: inline-block; padding: 11px 20px; border-radius: 12px; font: inherit; font-weight: 600; text-decoration: none; border: 2px solid transparent; cursor: pointer; text-align: center; transition: transform .15s, box-shadow .15s; }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,.15); }
+  .btn.wa { background: #25d366; color: #fff; }
+  .btn.call { background: var(--o); color: #fff; }
+  .btn.ghost { background: #fff; color: var(--gd); border-color: var(--g); }
   .btn.small { padding: 6px 14px; }
-  .points { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
-  .points li { background: #fff; border-left: 4px solid var(--g); padding: 10px 14px; border-radius: 6px; }
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
-  .chip { background: #fff; border: 1px solid #cfe5d3; padding: 8px 14px; border-radius: 999px; color: var(--ink); text-decoration: none; }
-  .chip:hover { border-color: var(--g); background: #ecf8ee; }
-  .note { font-size: .9rem; color: #6b7280; margin: 10px 0 0; }
-  textarea { width: 100%; padding: 12px; border: 1px solid #cfe5d3; border-radius: 10px; font: inherit; margin-bottom: 10px; }
-  footer { text-align: center; padding-top: 24px; padding-bottom: 90px; border-top: 1px solid #dfeee2; }
-  footer a { color: var(--gd); font-weight: 600; }
-  .float { position: fixed; right: 16px; bottom: 16px; background: #25d366; color: #fff; padding: 12px 18px; border-radius: 999px; text-decoration: none; font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,.25); }
+  .btn.big { padding: 14px 24px; font-size: 1.05rem; }
+
+  .hero { background: linear-gradient(135deg, #14532d 0%, #15803d 55%, #65a30d 100%); color: #fff; padding: 36px 0 44px; position: relative; overflow: hidden; }
+  .hero-in { display: grid; gap: 24px; align-items: center; }
+  @media (min-width: 800px) { .hero-in { grid-template-columns: 1.3fr 1fr; } }
+  .pill { display: inline-block; background: rgba(255,255,255,.18); padding: 4px 14px; border-radius: 999px; font-size: .9rem; margin: 0 0 12px; }
+  .hero h1 { font-size: clamp(1.9rem, 6vw, 3rem); line-height: 1.25; margin: 0 0 12px; }
+  .hero h1 span { color: var(--y); }
+  .lead { font-size: 1.1rem; margin: 0 0 20px; opacity: .95; }
+  .row { display: flex; flex-wrap: wrap; gap: 12px; }
+  .hero .btn.ghost { background: transparent; color: #fff; border-color: #fff; }
+  .trust { list-style: none; padding: 0; margin: 20px 0 0; display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: .95rem; }
+  .hero-art { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 320px; margin: 0 auto; }
+  .hero-art span { background: rgba(255,255,255,.15); border-radius: 20px; aspect-ratio: 1; display: grid; place-items: center; font-size: 2.4rem; animation: bob 3s ease-in-out infinite; animation-delay: var(--d); }
+  @keyframes bob { 50% { transform: translateY(-8px); } }
+
+  .grid { display: grid; gap: 14px; }
+  .grid.four { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+  .grid.three { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .tiles { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+  .tiles.two { grid-template-columns: repeat(auto-fit, minmax(150px, 220px)); }
+  .card { background: #fff; border-radius: 18px; padding: 18px; box-shadow: 0 2px 10px rgba(20,83,45,.08); border: 1px solid #eef3ea; }
+  .feat { text-align: center; }
+  .feat p { margin: 6px 0 0; font-weight: 600; }
+  .ico { font-size: 2.2rem; background: var(--gl); width: 62px; height: 62px; border-radius: 50%; display: grid; place-items: center; margin: 0 auto; }
+
+  .tile { background: #fff; border-radius: 18px; padding: 18px 12px; text-align: center; text-decoration: none; font-weight: 600; border: 1px solid #e2eadd; box-shadow: 0 2px 8px rgba(20,83,45,.07); display: flex; flex-direction: column; align-items: center; gap: 6px; transition: transform .15s, box-shadow .15s, border-color .15s; }
+  .tile span { font-size: 2.3rem; line-height: 1.1; }
+  .tile em { font-style: normal; font-size: .85rem; color: var(--g); font-weight: 500; }
+  .tile:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(20,83,45,.15); border-color: var(--g); }
+
+  .band { padding: 32px 0; }
+  .sweet { background: linear-gradient(180deg, #fff1e0, #ffe9cc); }
+  .sweet h2 { color: #9a3412; }
+  .h2b { margin-top: 28px; }
+  .tiffin { background: var(--gd); color: #fff; }
+  .tiffin h2 { color: var(--y); }
+  .tiffin .sub { color: #d7eadb; }
+  .tiffin .tile { color: var(--ink); }
+
+  .step { text-align: center; }
+  .step b { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--o); color: #fff; font-size: 1.2rem; }
+  .step p { margin: 0; color: #4b5d52; }
+
+  .parchi { background: linear-gradient(135deg, #f0fdf4, #fff); border: 2px solid var(--g); }
+  textarea { width: 100%; padding: 12px; border: 1px solid #b7d4bd; border-radius: 12px; font: inherit; margin-bottom: 12px; resize: vertical; background: #fff; }
+  textarea:focus { outline: 3px solid var(--gl); border-color: var(--g); }
+
+  .share { text-align: center; }
+  footer { background: #0f2a1a; color: #d7eadb; text-align: center; padding: 28px 0 36px; }
+  footer p { margin: 4px 0; }
+  footer .owner { margin-top: 12px; font-size: .85rem; opacity: .8; }
+  footer .fb { font-size: 1.3rem; font-weight: 700; color: #fff; }
+  footer a { color: var(--y); font-weight: 600; text-decoration: none; }
+
+  .dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; display: flex; gap: 10px; padding: 10px 12px; background: rgba(255,255,255,.96); box-shadow: 0 -4px 16px rgba(0,0,0,.12); }
+  .dock .btn { flex: 1; }
+  @media (min-width: 720px) {
+    body { padding-bottom: 0; }
+    .dock { left: auto; right: 18px; bottom: 18px; border-radius: 999px; padding: 8px; }
+    .dock .btn { flex: none; border-radius: 999px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .hero-art span { animation: none; } html { scroll-behavior: auto; } .btn, .tile { transition: none; } }
 </style>
